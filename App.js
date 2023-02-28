@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Keyboard } from 'react-native';
 
 import api from './src/services/api';
+import MyPicker from './src/components/MyPicker';
 
 
 export default function CurrencyConverterApp() {
@@ -11,6 +11,9 @@ export default function CurrencyConverterApp() {
   const [loading, setLoading] = useState(true);
   const [moedaSelecionada, setMoedaSelecionada] = useState(null);
   const [moedaBValor, setMoedaBValor] = useState(0);
+
+  const [valorMoeda, setValorMoeda] = useState(null);
+  const [valorConvertido, setValorConvertido] = useState(0);
 
   const fetchMoedas = async () => {
     try {
@@ -27,6 +30,24 @@ export default function CurrencyConverterApp() {
   }, []);
 
 
+  async function converter() {
+   if(moedaSelecionada === null || moedaBValor === 0){
+    alert('Por favor selecione uma moeda!');
+    return;
+   }
+
+   const response = await api.get(`all/${moedaSelecionada}-BRL`);
+
+   const resultado = (response.data[moedaSelecionada].ask * parseFloat(moedaBValor));
+   setValorConvertido(`R$ ${resultado.toFixed(2)}`);
+   setValorMoeda(moedaBValor);
+
+   //Ele fecha o teclado caso esteja aberto
+   Keyboard.dismiss();
+
+  //  console.log(response.data[moedaSelecionada].ask);
+  }
+
   if (loading) {
     return (
       <View style={{ justifyContent: 'center', alignContent: 'center', flex: 1 }}>
@@ -40,15 +61,8 @@ export default function CurrencyConverterApp() {
         <View style={styles.areaMoeda}>
           <Text style={styles.titulo}>Selecione sua moeda</Text>
 
-          <Picker
-            selectedValue={moedaSelecionada}
-            onValueChange={(itemValue, itemIndex) => setMoedaSelecionada(itemValue)}
-          >
-            <Picker.Item label="Selecione uma opção" value="" />
-            {moedas.map((item) => (
-              <Picker.Item label={item} value={item} key={item} />
-            ))}
-          </Picker>
+          <MyPicker moedas={moedas} moedaSelecionada={moedaSelecionada} onChange={(moeda) => setMoedaSelecionada(moeda)} />
+
         </View>
 
         <View style={styles.areaValor}>
@@ -61,22 +75,25 @@ export default function CurrencyConverterApp() {
           />
         </View>
 
-        <TouchableOpacity style={styles.botaoArea}>
+        <TouchableOpacity style={styles.botaoArea} onPress={converter}>
           <Text style={styles.botaoTexto}>Converter</Text>
         </TouchableOpacity>
 
-        <View style={styles.areaResultado}>
-          <Text style={styles.valorConvertido}>
-            {moedaBValor} {moedaSelecionada}
-          </Text>
-          <Text style={[styles.valorConvertido, { fontSize: 18, margin: 10 }]}>
-            Corresponde a
-          </Text>
-          <Text style={styles.valorConvertido}>
-            19,90
-          </Text>
+        {valorConvertido !== 0 && (
+          <View style={styles.areaResultado} >
+            <Text style={styles.valorConvertido}>
+              {valorMoeda} {moedaSelecionada}
+            </Text>
+            <Text style={[styles.valorConvertido, { fontSize: 18, margin: 10 }]}>
+              Corresponde a
+            </Text>
+            <Text style={styles.valorConvertido}>
+              {valorConvertido}
+            </Text>
 
-        </View>
+          </View>
+        )}
+
 
       </View>
     );

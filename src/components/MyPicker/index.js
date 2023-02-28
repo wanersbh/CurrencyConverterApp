@@ -13,17 +13,14 @@ export default function MyPicker(props) {
 
     return (
         <Picker
-            selectedValue={selectedCurrency}
-            onValueChange={(itemValue, itemIndex) => {
-                setSelectedCurrency(itemValue);
-                console.log(selectedCurrency);
-            }}
-            prompt='Selecione uma moeda'
-            placeholder={placeholder}
-            style={styles.picker}
-        >
-            {props}
-        </Picker>
+        selectedValue={props.moedaSelecionada}
+        onValueChange={(itemValue, itemIndex) => props.onChange(itemValue)}
+      >
+        <Picker.Item label="Selecione uma opção" value="" />
+        {props.moedas.map((item) => (
+          <Picker.Item label={item} value={item} key={item} />
+        ))}
+      </Picker>
 
     );
 }
