@@ -2,7 +2,7 @@ import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-export default function MyPicker() {
+export default function MyPicker(props) {
 
     const [selectedCurrency, setSelectedCurrency] = useState(null);
     const placeholder = {
@@ -21,16 +21,15 @@ export default function MyPicker() {
             prompt='Selecione uma moeda'
             placeholder={placeholder}
             style={styles.picker}
-            >
-            <Picker.Item key='1' label="USD" value="USD" />
-            <Picker.Item key='2' label="EUR" value="EUR" />
+        >
+            {props}
         </Picker>
 
     );
 }
 
 const styles = StyleSheet.create({
-    picker:{
+    picker: {
         color: '#000'
     }
 });
