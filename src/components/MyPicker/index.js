@@ -15,6 +15,7 @@ export default function MyPicker(props) {
         <Picker
         selectedValue={props.moedaSelecionada}
         onValueChange={(itemValue, itemIndex) => props.onChange(itemValue)}
+        style={styles.picker}
       >
         <Picker.Item label="Selecione uma opção" value="" />
         {props.moedas.map((item) => (
@@ -27,7 +28,9 @@ export default function MyPicker(props) {
 
 const styles = StyleSheet.create({
     picker: {
-        color: '#000'
+        color: '#000',
+        fontWeight: 'bold'
+        
     }
 });
 
